@@ -1,4 +1,13 @@
+# client.py
+import socket
+import threading
+import pickle
 import tkinter as tk
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(("127.0.0.1", 5555))  # Replace with server IP if testing on LAN
+
+game_state = {}
 
 maze = [
     "+-  ----------------------------------------------------------------------------+",
@@ -39,27 +48,48 @@ maze = [
     "|     H |H    H |               |   |       |   | b | h |h             H|       |",
     "|   +---------------+   +---+   |   |   +---+   |   |   +---------------+       |",
     "|   |H     H       H|       |   |   |    b  H  H|   | H        b    |           |",
-    "|   +     b         +-------+   |   +-----------+   +-------+   +   +    @      |",
+    "|   +     b         +-------+   |   +-----------+   +-------+   +   +           |",
     "|                               |H   B          #               |              h|",
     "+-------------------------------------------------------------------------------+"
 ]
 
+root = tk.Tk()
+root.title("Maze Client")
 
+text_widget = tk.Text(root, font=("Courier", 12), bg="black", fg="lime", wrap="none")
+text_widget.pack(fill=tk.BOTH, expand=True)
 
-def drawMaze():
-    root = tk.Tk()
-    root.title("Maze Display")
+def draw_players():
+    display = [list(row) for row in maze]
+    for player_id, pos in game_state.items():
+        x, y = pos["x"], pos["y"]
+        if 0 <= x < len(display) and 0 <= y < len(display[x]):
+            display[x][y] = "@"  # Just insert for display
 
-    text_widget = tk.Text(root, font=("Courier", 12), bg="black", fg="lime", wrap="none")
+    text_widget.config(state=tk.NORMAL)
+    text_widget.delete("1.0", tk.END)
 
-    text_widget.pack(fill=tk.BOTH, expand=True)
+    for i, row in enumerate(display):
+        for j, ch in enumerate(row):
+            tag = "player" if ch == "@" else "normal"
+            text_widget.insert(tk.END, ch, tag)
+        text_widget.insert(tk.END, "\n")
 
-    for row in maze:
-        text_widget.insert(tk.END, row + "\n")
-
+    text_widget.tag_config("normal", foreground="lime")
+    text_widget.tag_config("player", foreground="red")
     text_widget.config(state=tk.DISABLED)
 
-    root.mainloop()
+def receive_updates():
+    global game_state
+    while True:
+        try:
+            data = client.recv(4096)
+            if data:
+                game_state = pickle.loads(data)
+                root.after(0, draw_players)
+        except:
+            break
 
+threading.Thread(target=receive_updates, daemon=True).start()
 
-
+root.mainloop()
