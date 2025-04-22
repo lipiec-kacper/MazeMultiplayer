@@ -5,7 +5,7 @@ import pickle
 import random
 import time
 
-HOST = '0.0.0.0'
+HOST = "192.168.0.6"
 PORT = 5555
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -31,6 +31,8 @@ def handle_client(conn, addr):
     game_state[player_id] = {"x": random.randint(36, 39), "y": random.randint(69, 79)}
     time.sleep(0.1)
 
+    conn.send(pickle.dumps({"player_id": player_id}))
+
 
     broadcast_game_state()
 
@@ -39,8 +41,12 @@ def handle_client(conn, addr):
             data = conn.recv(1024)
             if not data:
                 break
-                # Example: if we later send moves, we update game_state here
-                # Then rebroadcast after any update
+            
+            update = pickle.loads(data)
+            if "id" in update and "pos" in update:
+                game_state[update["id"]] = update["pos"]
+                broadcast_game_state()
+
     except:
         pass
     finally:
