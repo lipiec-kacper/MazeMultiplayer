@@ -3,9 +3,10 @@ import socket
 import threading
 import pickle
 import tkinter as tk
+from tkinter import messagebox
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(("192.168.0.6", 5555))  # Replace with server IP if testing on LAN
+client.connect(("", 5555))  # Replace with server IP if testing on LAN
 
 # Get player ID
 data = client.recv(1024)
@@ -64,6 +65,35 @@ root.title("Maze Client")
 text_widget = tk.Text(root, font=("Courier", 12), bg="black", fg="lime", wrap="none")
 text_widget.pack(fill=tk.BOTH, expand=True)
 
+def help_overlay():
+    overlay = tk.Frame(root, bg="black", width=300, height=200)
+    overlay.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+
+    label1 = tk.Label(overlay, text="Help window", fg="white", bg="black")
+    label1.pack(pady=(10, 5))
+
+    label2 = tk.Label(overlay, text="Use Z Q S D to move", fg="white", bg="black")
+    label2.pack()
+
+    label3 = tk.Label(overlay, text="h are bandages and H are medikits", fg="white", bg="black")
+    label3.pack()
+
+    label4 = tk.Label(overlay, text="A are weapons", fg="white", bg="black")
+    label4.pack()
+
+    label5 = tk.Label(overlay, text="b are small bosses and B are big bosses", fg="white", bg="black")
+    label5.pack()   
+
+    label6 = tk.Label(overlay, text="# are minigame doors", fg="white", bg="black")
+    label6.pack()
+
+    label7 = tk.Label(overlay, text="To finish the game find the way out", fg="white", bg="black")
+    label7.pack()
+
+
+    button = tk.Button(overlay, text="close", command=overlay.destroy)
+    button.pack()
+
 def draw_players():
     display = [list(row) for row in maze]
     tag_map = {}
@@ -100,6 +130,8 @@ def handle_keypress(event):
         dy = -1
     elif key == "d":
         dy = 1
+    elif key =="h":
+        help_overlay()
 
     if dx != 0 or dy != 0:
         try_move(dx, dy)
@@ -124,6 +156,8 @@ def send_position(pos):
 
 def receive_updates():
     global game_state
+    messagebox.showinfo("Info", "Your player is the white @ on the maze, Use z, s, q, d to move, For more help press h")
+
     while True:
         try:
             data = client.recv(4096)

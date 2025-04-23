@@ -5,7 +5,7 @@ import pickle
 import random
 import time
 
-HOST = "192.168.0.6"
+HOST = ""
 PORT = 5555
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
