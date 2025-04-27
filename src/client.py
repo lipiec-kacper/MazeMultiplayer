@@ -3,7 +3,8 @@ import threading
 import pickle
 import tkinter as tk
 from tkinter import messagebox
-from GameScript.movements import handle_keypress
+from src.GameScript.movements import handle_keypress
+from src.GameScript.player import Player
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(("", 5555))  # Replace with server IP if testing on LAN
@@ -12,6 +13,7 @@ client.connect(("", 5555))  # Replace with server IP if testing on LAN
 data = client.recv(1024)
 info = pickle.loads(data)
 my_player_id = info["player_id"]
+player = Player(name="Alice", health=100, player_id=my_player_id)
 
 game_state = {}
 
@@ -108,5 +110,5 @@ def receive_updates():
 
 threading.Thread(target=receive_updates, daemon=True).start()
 
-root.bind("<Key>", lambda event: handle_keypress(event, root, my_player_id, game_state, maze, send_position))
+root.bind("<Key>", lambda event: handle_keypress(event, root, my_player_id, game_state, maze, send_position, player))
 root.mainloop()
