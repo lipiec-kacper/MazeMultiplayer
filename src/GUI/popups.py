@@ -10,7 +10,7 @@ def help_overlay(root):
     label1 = tk.Label(overlay, text="Help window", fg="white", bg="black")
     label1.pack(pady=(10, 5))
 
-    label2 = tk.Label(overlay, text="Use Z Q S D to move", fg="white", bg="black")
+    label2 = tk.Label(overlay, text="Use Up, Down, Left, Right arrows to move", fg="white", bg="black")
     label2.pack()
 
     label3 = tk.Label(overlay, text="h are bandages and H are medikits", fg="white", bg="black")
@@ -22,7 +22,10 @@ def help_overlay(root):
     label5 = tk.Label(overlay, text="b are small bosses and B are big bosses", fg="white", bg="black")
     label5.pack()   
 
-    label6 = tk.Label(overlay, text="# are minigame doors", fg="white", bg="black")
+    label6 = tk.Label(overlay, text="press x to heal", fg="white", bg="black")
+    label6.pack()
+
+    label6 = tk.Label(overlay, text="press i to open the inventory", fg="white", bg="black")
     label6.pack()
 
     label7 = tk.Label(overlay, text="To finish the game find the way out", fg="white", bg="black")

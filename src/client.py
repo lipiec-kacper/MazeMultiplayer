@@ -119,7 +119,7 @@ def send_position(pos):
 
 def receive_updates():
     global game_state
-    messagebox.showinfo("Info", "Your player is the white @ on the maze, Use z, s, q, d to move, For more help press h")
+    messagebox.showinfo("Info", "Your player is the white @ on the maze, Use Up, Down, Left, Right arrows to move, For more help press h")
 
     while True:
         try:
