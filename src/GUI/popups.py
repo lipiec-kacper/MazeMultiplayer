@@ -1,5 +1,7 @@
 import tkinter as tk
 from src.GameScript.heals import Heals
+from tkinter import messagebox
+
 def help_overlay(root):
     overlay = tk.Frame(root, bg="black", width=300, height=200)
     overlay.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
@@ -109,6 +111,5 @@ def heal_overlay(root, player):
 
     button = tk.Button(overlay, text="Close", command=overlay.destroy)
     button.pack()
-
 
 

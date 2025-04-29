@@ -6,7 +6,6 @@ class Weapons(Enum):
     KNIFE = 25
     GLOCK = 40
     FIST = 15
-    SWORD = 25
 
     @staticmethod
     def access_dammage(name):

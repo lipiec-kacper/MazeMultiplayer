@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import messagebox
 from src.GameScript.movements import handle_keypress
 from src.GameScript.player import Player
+from src.GameScript.weapons import Weapons
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(("", 5555))  # Replace with server IP if testing on LAN
@@ -14,6 +15,7 @@ data = client.recv(1024)
 info = pickle.loads(data)
 my_player_id = info["player_id"]
 player = Player(name="Alice", health=100, player_id=my_player_id)
+player.add_weapon(Weapons.FIST.name)
 
 game_state = {}
 
@@ -90,6 +92,16 @@ def draw_players():
     text_widget.tag_config("my_player", foreground="white")
     text_widget.tag_config("other_player", foreground="red")
     text_widget.config(state=tk.DISABLED)
+    
+def end_game():
+    data = pickle.dumps({
+    "id": my_player_id,
+    "event": "game_over",
+    "name": player.name
+})
+    client.send(data)
+    messagebox.showinfo("Game Over", "You reached the end of the maze!")
+
 
 def send_position(pos):
     data = pickle.dumps({"id": my_player_id, "pos": pos})
@@ -103,12 +115,26 @@ def receive_updates():
         try:
             data = client.recv(4096)
             if data:
-                game_state = pickle.loads(data)
-                root.after(0, draw_players)
+                msg = pickle.loads(data)
+
+                # If server says the game is over
+                if isinstance(msg, dict) and msg.get("type") == "end":
+                    def end_for_all():
+                        messagebox.showinfo("Game Over", msg.get("message", "Someone finished the maze!"))
+                        root.destroy()
+                    root.after(0, end_for_all)
+                    break
+
+                # Otherwise assume it's game state update
+                else:
+                    game_state = msg
+                    root.after(0, draw_players)
+
         except:
             break
 
+
 threading.Thread(target=receive_updates, daemon=True).start()
 
-root.bind("<Key>", lambda event: handle_keypress(event, root, my_player_id, game_state, maze, send_position, player))
+root.bind("<Key>", lambda event: handle_keypress(event, root, my_player_id, game_state, maze, send_position, player, end_game))
 root.mainloop()
