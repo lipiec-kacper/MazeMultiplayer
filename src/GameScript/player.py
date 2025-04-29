@@ -6,9 +6,8 @@ class Player:
         self.inventory = [[],[]]
     
     def get_inventory(self):
-        for line in self.inventory:
-            return line
-    
+        return [list(self.inventory[0]), list(self.inventory[1])]
+
     def get_weapons(self):
         return self.inventory[0]
     

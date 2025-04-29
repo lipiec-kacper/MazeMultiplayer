@@ -1,4 +1,5 @@
-from src.GUI.popups import help_overlay
+from src.GUI.popups import help_overlay, inventory_overlay
+from .heals import Heals
 
 def handle_keypress(event, root, my_player_id, game_state, maze, send_position_func, player):
     key = event.keysym.lower()
@@ -14,6 +15,8 @@ def handle_keypress(event, root, my_player_id, game_state, maze, send_position_f
         dy = 1
     elif key =="h":
         help_overlay(root)
+    elif key == "i":
+        inventory_overlay(root, player)
 
     if dx != 0 or dy != 0:
         try_move(dx, dy, my_player_id, game_state, maze, send_position_func, player)
@@ -36,7 +39,8 @@ def try_move(dx, dy, my_player_id, game_state, maze, send_position_func, player)
         elif maze[new_x][new_y] == "h":
             pos["x"] = new_x
             pos["y"] = new_y
-            player.add_heal("bandage")
+            player.add_heal(Heals.Bandages.name)
+            #print the heal inventory
             print(player.get_heals())
             row_as_list = list(maze[new_x])
             row_as_list[new_y] = ' '
@@ -45,7 +49,8 @@ def try_move(dx, dy, my_player_id, game_state, maze, send_position_func, player)
         elif maze[new_x][new_y] == "H":
             pos["x"] = new_x
             pos["y"] = new_y
-            player.add_heal("MedicKit")
+            player.add_heal(Heals.MediKit.name)
+            #print the heal inventory
             print(player.get_heals())
             row_as_list = list(maze[new_x])
             row_as_list[new_y] = ' '

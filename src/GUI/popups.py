@@ -1,4 +1,5 @@
 import tkinter as tk
+import src.GameScript.player
 
 def help_overlay(root):
     overlay = tk.Frame(root, bg="black", width=300, height=200)
@@ -36,7 +37,22 @@ def fight_overlay(root):
     label1 = tk.Label(overlay, text="Fight window", fg="white", bg="black")
     label1.pack(pady=(10, 5))
 
+def inventory_overlay(root, player):
+    overlay = tk.Frame(root, bg="black", width=300, height=200)
+    overlay.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
+    label1 = tk.Label(overlay, text="Inventory Window", fg="white", bg="black")
+    label1.pack(pady=(10, 5))
+
+    # Format the inventory
+    weapons, heals = player.get_inventory()
+    inventory_text = f"Weapons: {', '.join(weapons)}\nHeals: {', '.join(heals)}"
+
+    label2 = tk.Label(overlay, text=inventory_text, fg="white", bg="black", justify="left")
+    label2.pack()
+
+    button = tk.Button(overlay, text="close", command=overlay.destroy)
+    button.pack()
 
 
 
