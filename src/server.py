@@ -48,8 +48,8 @@ def handle_client(conn, addr):
     clients.append(conn)
 
     player_id = addr[1]  # Use port as unique ID
-    #game_state[player_id] = {"x": random.randint(36, 39), "y": random.randint(69, 79)}
-    game_state[player_id] = {"x": 4, "y": 2}
+    game_state[player_id] = {"x": random.randint(36, 39), "y": random.randint(69, 79)}
+    #game_state[player_id] = {"x": 4, "y": 2}
     time.sleep(0.1)
 
     conn.send(pickle.dumps({"player_id": player_id}))

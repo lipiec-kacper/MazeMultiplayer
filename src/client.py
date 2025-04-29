@@ -102,6 +102,16 @@ def end_game():
     client.send(data)
     messagebox.showinfo("Game Over", "You reached the end of the maze!")
 
+def game_over():
+    data = pickle.dumps({
+    "id": my_player_id,
+    "event": "game_over",
+    "name": player.name
+})
+    client.send(data)
+    messagebox.showinfo("Game Over", "You died")
+
+
 
 def send_position(pos):
     data = pickle.dumps({"id": my_player_id, "pos": pos})
@@ -117,7 +127,6 @@ def receive_updates():
             if data:
                 msg = pickle.loads(data)
 
-                # If server says the game is over
                 if isinstance(msg, dict) and msg.get("type") == "end":
                     def end_for_all():
                         messagebox.showinfo("Game Over", msg.get("message", "Someone finished the maze!"))
@@ -125,7 +134,6 @@ def receive_updates():
                     root.after(0, end_for_all)
                     break
 
-                # Otherwise assume it's game state update
                 else:
                     game_state = msg
                     root.after(0, draw_players)
@@ -136,5 +144,5 @@ def receive_updates():
 
 threading.Thread(target=receive_updates, daemon=True).start()
 
-root.bind("<Key>", lambda event: handle_keypress(event, root, my_player_id, game_state, maze, send_position, player, end_game))
+root.bind("<Key>", lambda event: handle_keypress(event, root, my_player_id, game_state, maze, send_position, player, end_game, game_over))
 root.mainloop()

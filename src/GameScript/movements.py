@@ -1,8 +1,10 @@
-from src.GUI.popups import heal_overlay, help_overlay, inventory_overlay
+from src.GUI.popups import fight_overlay, heal_overlay, help_overlay, inventory_overlay
+from src.GameScript.fight import random_boss
 from .heals import Heals
 from .weapons import Weapons
+from .bosses import BossTypes
 
-def handle_keypress(event, root, my_player_id, game_state, maze, send_position_func, player, end_game_func):
+def handle_keypress(event, root, my_player_id, game_state, maze, send_position_func, player, end_game_func, game_over_func):
     key = event.keysym.lower()
     dx, dy = 0, 0
 
@@ -22,9 +24,9 @@ def handle_keypress(event, root, my_player_id, game_state, maze, send_position_f
         heal_overlay(root, player)
 
     if dx != 0 or dy != 0:
-        try_move(dx, dy, my_player_id, game_state, maze, send_position_func, player, end_game_func)
+        try_move(dx, dy, my_player_id, game_state, maze, send_position_func, player, end_game_func, root, end_game_func)
 
-def try_move(dx, dy, my_player_id, game_state, maze, send_position_func, player, end_game_func):
+def try_move(dx, dy, my_player_id, game_state, maze, send_position_func, player, end_game_func, root, game_over_func):
     pos = game_state.get(my_player_id)
     if not pos:
         return
@@ -43,13 +45,45 @@ def try_move(dx, dy, my_player_id, game_state, maze, send_position_func, player,
             print("end of game")
 
 
-        #TODO:MODIFY THE BOSSES SKIP
         if (maze[new_x][new_y] == " " or maze[new_x][new_y] == "_") :
             pos["x"] = new_x
             pos["y"] = new_y
             send_position_func(pos)
-        #elif maze[new_x][new_y] == "b":
+        elif maze[new_x][new_y] == "b":
+            boss = random_boss("b")
+            boss_health = boss.access_health(boss.name)
+            boss_dammages = boss.access_dammage(boss.name)
+
+            def after_fight(result):
+                if result:
+                    print("Player won the fight!")
+                    row_as_list = list(maze[new_x])
+                    row_as_list[new_y] = ' '
+                    maze[new_x] = ''.join(row_as_list)
+                    send_position_func(pos)
+                else:
+                    game_over_func()
+
+            fight_overlay(root, player, boss_health, boss.name, boss_dammages, after_fight)
+
+        elif maze[new_x][new_y] == "B":
         #TODO:figth overlay
+            boss = random_boss("B")
+            boss_health = boss.access_health(boss.name)
+            boss_dammages = boss.access_dammage(boss.name)
+
+            def after_fight(result):
+                if result:
+                    print("Player won the fight!")
+                    row_as_list = list(maze[new_x])
+                    row_as_list[new_y] = ' '
+                    maze[new_x] = ''.join(row_as_list)
+                    send_position_func(pos)
+                else:
+                    game_over_func()
+
+            fight_overlay(root, player, boss_health, boss.name, boss_dammages, after_fight)
+
         elif maze[new_x][new_y] == "h":
             pos["x"] = new_x
             pos["y"] = new_y
