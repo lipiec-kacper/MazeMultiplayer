@@ -6,14 +6,16 @@ class Player:
         self.inventory = [[],[]]
     
     def get_inventory(self):
-        for line in self.inventory:
-            return line
-    
+        return [list(self.inventory[0]), list(self.inventory[1])]
+
     def get_weapons(self):
         return self.inventory[0]
     
     def get_heals(self):
         return self.inventory[1]
+
+    def get_player_health(self):
+        return self.health
     
     def add_weapon(self, name):
         self.inventory[0].append(name)
@@ -23,4 +25,7 @@ class Player:
 
     def remove_heal(self, name):
         self.inventory[1].remove(name)
+    
+    def heal_player(self, heal):
+        self.health += heal
 
