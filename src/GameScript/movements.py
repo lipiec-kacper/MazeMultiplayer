@@ -1,4 +1,4 @@
-from src.GUI.popups import help_overlay, inventory_overlay
+from src.GUI.popups import heal_overlay, help_overlay, inventory_overlay
 from .heals import Heals
 
 def handle_keypress(event, root, my_player_id, game_state, maze, send_position_func, player):
@@ -17,6 +17,8 @@ def handle_keypress(event, root, my_player_id, game_state, maze, send_position_f
         help_overlay(root)
     elif key == "i":
         inventory_overlay(root, player)
+    elif key == "x":
+        heal_overlay(root, player)
 
     if dx != 0 or dy != 0:
         try_move(dx, dy, my_player_id, game_state, maze, send_position_func, player)
